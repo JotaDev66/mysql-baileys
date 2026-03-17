@@ -157,7 +157,8 @@ async function createOptimizedSchema(config: MySQLConfig) {
             'sender_key_memory',
             'pre_keys',
             'app_state_sync_versions',
-            'app_state_sync_keys'
+            'app_state_sync_keys',
+            'contacts_tc_tokens'
         ]
 
         for (const table of keyTables) {
@@ -448,13 +449,14 @@ export const useMySQLAuthStateOptimized = async(config: MySQLConfig): Promise<{
         }
 
         const currentDeviceId = await getDeviceId()
-        const tableMap = {
+        const tableMap: { [K in keyof SignalDataTypeMap]: string } = {
             'sender-key': 'sender_keys',
             'session': 'sessions',
             'sender-key-memory': 'sender_key_memory',
             'pre-key': 'pre_keys',
             'app-state-sync-version': 'app_state_sync_versions',
-            'app-state-sync-key': 'app_state_sync_keys'
+            'app-state-sync-key': 'app_state_sync_keys',
+            'contacts-tc-token': 'contacts_tc_tokens'
         }
 
         const tableName = tableMap[type]
@@ -510,13 +512,14 @@ export const useMySQLAuthStateOptimized = async(config: MySQLConfig): Promise<{
             const categoryData = data[category as keyof SignalDataTypeMap]
             if (!categoryData) continue
 
-            const tableMap = {
+            const tableMap: { [K in keyof SignalDataTypeMap]: string } = {
                 'sender-key': 'sender_keys',
                 'session': 'sessions',
                 'sender-key-memory': 'sender_key_memory',
                 'pre-key': 'pre_keys',
                 'app-state-sync-version': 'app_state_sync_versions',
-                'app-state-sync-key': 'app_state_sync_keys'
+                'app-state-sync-key': 'app_state_sync_keys',
+                'contacts-tc-token': 'contacts_tc_tokens'
             }
 
             const tableName = tableMap[category as keyof typeof tableMap]
@@ -581,7 +584,7 @@ export const useMySQLAuthStateOptimized = async(config: MySQLConfig): Promise<{
         
         try {
             // Limpar tabelas otimizadas
-            const keyTables = ['sender_keys', 'sessions', 'sender_key_memory', 'pre_keys', 'app_state_sync_versions', 'app_state_sync_keys']
+            const keyTables = ['sender_keys', 'sessions', 'sender_key_memory', 'pre_keys', 'app_state_sync_versions', 'app_state_sync_keys', 'contacts_tc_tokens']
             
             for (const table of keyTables) {
                 await query(`DELETE FROM ${table} WHERE device_id = ?`, [currentDeviceId])
@@ -606,7 +609,8 @@ export const useMySQLAuthStateOptimized = async(config: MySQLConfig): Promise<{
                 'sender_key_memory',
                 'pre_keys',
                 'app_state_sync_versions',
-                'app_state_sync_keys'
+                'app_state_sync_keys',
+                'contacts_tc_tokens'
             ]
 
             // Remover dados de todas as tabelas de chaves primeiro
@@ -694,7 +698,8 @@ export const useMySQLAuthStateOptimized = async(config: MySQLConfig): Promise<{
                 { type: 'session', table: 'sessions', prefix: 'session-' },
                 { type: 'pre-key', table: 'pre_keys', prefix: 'pre-key-' },
                 { type: 'app-state-sync-version', table: 'app_state_sync_versions', prefix: 'app-state-sync-version-' },
-                { type: 'app-state-sync-key', table: 'app_state_sync_keys', prefix: 'app-state-sync-key-' }
+                { type: 'app-state-sync-key', table: 'app_state_sync_keys', prefix: 'app-state-sync-key-' },
+                { type: 'contacts-tc-token', table: 'contacts_tc_tokens', prefix: 'contacts-tc-token-' }
             ]
 
             const currentDeviceId = await getDeviceId()
@@ -829,7 +834,7 @@ export const useMySQLAuthStateOptimized = async(config: MySQLConfig): Promise<{
         try {
             console.log('🔍 Diagnóstico do schema...')
             
-            const keyTables = ['sender_keys', 'sessions', 'sender_key_memory', 'pre_keys', 'app_state_sync_versions', 'app_state_sync_keys']
+            const keyTables = ['sender_keys', 'sessions', 'sender_key_memory', 'pre_keys', 'app_state_sync_versions', 'app_state_sync_keys', 'contacts_tc_tokens']
             const issues: string[] = []
 
             for (const table of keyTables) {

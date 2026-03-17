@@ -108,6 +108,11 @@ export type SignalDataTypeMap = {
 	'sender-key-memory': {
 		[jid: string]: boolean
 	}
+	'contacts-tc-token': {
+		token: Buffer
+		timestamp?: string
+		senderTimestamp?: number
+	}
 }
 
 export type SignalDataSet = {
